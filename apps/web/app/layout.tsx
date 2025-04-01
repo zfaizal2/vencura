@@ -26,8 +26,8 @@ export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
           }}
         >
           <DynamicWidget />
-        </DynamicContextProvider>
         {children}
+        </DynamicContextProvider>
       </body>
     </html>
   );

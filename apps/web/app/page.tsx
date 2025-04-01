@@ -1,3 +1,4 @@
+'use client';
 import { Suspense } from 'react';
 import Image from 'next/image';
 
@@ -8,6 +9,7 @@ import { Code } from '@repo/ui/code';
 import { Button } from '@repo/ui/button';
 
 import styles from './page.module.css';
+import { getAuthToken, useDynamicContext } from '@dynamic-labs/sdk-react-core';
 
 const Gradient = ({
   conic,
@@ -35,7 +37,12 @@ const Gradient = ({
 const LinksSection = async () => {
   const fetchLinks = async (): Promise<Link[]> => {
     try {
-      return await (await fetch('http://localhost:3000/links')).json();
+      const token = await getAuthToken();
+      return await (await fetch('http://localhost:3000/links', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })).json();
     } catch (_) {
       return [];
     }
@@ -65,6 +72,7 @@ const LinksSectionForTest = () => {
 };
 
 const RootPage = ({ params }: { params: { forTest?: boolean } }) => {
+  const { user } = useDynamicContext();
   return (
     <main className={styles.main}>
       <div className={styles.description}>
@@ -152,7 +160,7 @@ const RootPage = ({ params }: { params: { forTest?: boolean } }) => {
        *
        * @see https://nextjs.org/docs/app/building-your-application/testing/jest
        */}
-      {params.forTest ? (
+      {params.forTest && user ? (
         <LinksSectionForTest />
       ) : (
         <Suspense fallback={'Loading links...'}>{<LinksSection />}</Suspense>
