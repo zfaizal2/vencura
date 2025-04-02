@@ -21,4 +21,17 @@ model User {
   auth_id     String
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
+  Wallet      Wallet[]
+}
+
+model Wallet {
+  public_key String   @id
+  skey_hash  String
+  network    String
+  label      String
+  owner      String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user User @relation(fields: [owner], references: [id])
 }
