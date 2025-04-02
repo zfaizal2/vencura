@@ -20,5 +20,3 @@ export const links = {
     Link,
   },
 };
-
-export * from '../../../apps/api/src/utils';

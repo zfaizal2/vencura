@@ -13,6 +13,7 @@ import { DynamicAuthGuard } from './auth/dynamic.guard';
 import { AuthService } from './auth/auth.service';
 import { PrismaService } from './prisma/prisma.service';
 import { UserService } from './user/user.service';
+import { PrismaModule } from './prisma/prisma.module';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -22,8 +23,9 @@ import { UserService } from './user/user.service';
     WalletModule,
     UserModule,
     AuthModule,
+    PrismaModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService,{ provide: APP_GUARD, useClass: DynamicAuthGuard }, PrismaService, UserService],
+  providers: [AppService, AuthService, PrismaService, UserService],
 })
 export class AppModule {}

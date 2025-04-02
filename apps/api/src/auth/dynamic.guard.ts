@@ -20,7 +20,6 @@ export class DynamicAuthGuard implements CanActivate {
       }
 
       const jwtPayload = await this.authService.verifyToken(token);
-
       request.userAuthId = jwtPayload.sub;
       request.email = jwtPayload.email;
       return true;

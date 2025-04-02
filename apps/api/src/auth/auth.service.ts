@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DynamicStrategy } from '@dynamic-labs/passport-dynamic';
 import { ConfigService } from '@nestjs/config';
-import { JwtPayload } from 'jsonwebtoken';
+import { JwtPayload, decode } from 'jsonwebtoken';
 @Injectable()
 export class AuthService {
   private dynamicStrategy: DynamicStrategy;
@@ -12,7 +12,8 @@ export class AuthService {
     this.dynamicStrategy = new DynamicStrategy(
       { publicKey },
       async (payload, done) => {
-        return done(null, payload);
+        const decodedPayload = decode(payload as string);
+        return done(null, decodedPayload);
       },
     );
   }
