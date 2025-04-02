@@ -6,7 +6,7 @@ async function bootstrap() {
   
   // Enable CORS
   app.enableCors({
-    origin: ['http://localhost:3001', 'http://localhost:3000'], // Add your frontend URLs
+    origin: ['http://localhost:3001', 'http://localhost:3000', 'https://vencura-ui.onrender.com'], // Add your frontend URLs
     methods: ['GET', 'POST', 'PATCH', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
