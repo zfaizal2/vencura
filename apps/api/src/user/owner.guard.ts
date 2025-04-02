@@ -7,7 +7,7 @@ export class OwnerGuard implements CanActivate {
     context: ExecutionContext
   ): boolean | Promise<boolean> | Observable<boolean> {
     const request = context.switchToHttp().getRequest();
-    const owner = request.body.owner;
+    const owner = request.body.owner ?? request.params.id;
     return request.userAuthId === owner;
   }
 }

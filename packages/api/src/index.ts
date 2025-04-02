@@ -6,7 +6,8 @@ import { CreateUserDto } from 'user/dto/create-user.dto';
 import { CreateWalletDto } from 'wallet/create-wallet.dto';
 import { SendTransactionDto } from 'wallet/send-transaction.dto';
 import { SignMessageDto } from 'wallet/sign-message.dto';
-
+import { Wallet } from 'wallet/entities/wallet.entities';
+import { User } from 'user/entities/user.entities';
 export const links = {
   dto: {
     CreateLinkDto,
@@ -18,5 +19,7 @@ export const links = {
   },
   entities: {
     Link,
+    Wallet,
+    User,
   },
 };

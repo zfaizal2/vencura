@@ -1,7 +1,11 @@
-import { SendTransactionDto } from "@repo/api/packages/api/src/wallet/send-transaction.dto";
-import { SignMessageDto } from "@repo/api/packages/api/src/wallet/sign-message.dto";
 import { CreateUserDto } from "@repo/api/user/dto/create-user.dto";
 import { CreateWalletDto } from "@repo/api/wallet/create-wallet.dto";
+import { SendTransactionDto } from "@repo/api/wallet/send-transaction.dto";
+import { SignMessageDto } from "@repo/api/wallet/sign-message.dto";
+
+interface VerifyMessageResponse {
+  isValid: boolean;
+}
 
 export class VencuraSdk {
     private baseUrl: string;
@@ -24,6 +28,14 @@ export class VencuraSdk {
         return response.json();
     }
 
+    async getUser() {
+        const response = await fetch(`${this.baseUrl}/user`, {
+            headers: {
+                'Authorization': `Bearer ${this.sessionKey}`
+            }
+        });
+        return response.json();
+    }
     // Wallet Methods
     async createWallet(wallet: CreateWalletDto) {
         const response = await fetch(`${this.baseUrl}/wallet/solana`, {
@@ -37,8 +49,8 @@ export class VencuraSdk {
         return response.json();
     }
 
-    async getWallet(userAuthId: string) {
-        const response = await fetch(`${this.baseUrl}/wallet/solana/${userAuthId}`, {
+    async getWallets(userId: string) {
+        const response = await fetch(`${this.baseUrl}/wallet/solana/${userId}`, {
             headers: {
                 'Authorization': `Bearer ${this.sessionKey}`
             }

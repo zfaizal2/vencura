@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Wallet } from '@prisma/client';
-import { Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
+import { Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction } from '@solana/web3.js';
 import { CreateWalletDto } from '@repo/api/wallet/create-wallet.dto';
 import { Connection } from '@solana/web3.js';
 import { PrismaService } from 'src/prisma/prisma.service';
@@ -9,19 +9,23 @@ import { decryptKey, encryptKey } from 'src/utils';
 import { generateSolanaWallet } from 'src/utils/solana';
 import * as nacl from 'tweetnacl';
 import * as nacl_util from 'tweetnacl-util';
-
+import * as bs58 from 'bs58';
 @Injectable()
 export class SolanaService {
     constructor(private readonly prisma: PrismaService, private readonly configService: ConfigService) {}
 
     async createWallet(wallet: CreateWalletDto) {
+        const user = await this.prisma.user.findFirst({ where: { auth_id: wallet.owner } });
+        if (!user) {
+            throw new Error('User not found');
+        }
         const keypair = generateSolanaWallet();
         const skey = encryptKey(keypair.secretKey, this.configService.get('PKEY_SECRET'));
         return this.prisma.wallet.create({ data: {
             label: wallet.label,
             public_key: keypair.publicKey,
             skey_hash: skey,
-            owner: wallet.owner,
+            owner: user.id,
             network: "solana",
         } });
     }
@@ -43,7 +47,7 @@ export class SolanaService {
     async getBalance(publicKey: string) {
         const connection = new Connection(this.configService.get('SOLANA_RPC_URL'));
         const balance = await connection.getBalance(new PublicKey(publicKey));
-        return balance;
+        return {balance: balance / LAMPORTS_PER_SOL};
     }
 
     async sendTransaction(publicKey: string, to: string, amount: number) {
@@ -79,14 +83,14 @@ export class SolanaService {
         const keypair = Keypair.fromSecretKey(Buffer.from(sKey, 'base64'));
         const messageBytes = nacl_util.decodeUTF8(message);
         const signature = nacl.sign.detached(messageBytes, keypair.secretKey);
-        return {signed_message: nacl_util.encodeBase64(signature)};
+        return {signed_message: bs58.default.encode(signature)};
     }
 
     async verifyMessage(wallet: Wallet, message: string, signature: string) {
         const sKey = decryptKey(wallet.skey_hash, this.configService.get('PKEY_SECRET'));
         const keypair = Keypair.fromSecretKey(Buffer.from(sKey, 'base64'));
         const messageBytes = nacl_util.decodeUTF8(message);
-        const decodedSignature = nacl_util.decodeBase64(signature);
+        const decodedSignature = bs58.default.decode(signature);
         const isValid = nacl.sign.detached.verify(messageBytes, decodedSignature, keypair.secretKey);
         return isValid;
     }

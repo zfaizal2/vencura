@@ -10,7 +10,7 @@ export class SolanaController {
     constructor(private readonly solanaService: SolanaService) {}
 
     @Post()
-    @UseGuards(OwnerGuard)
+    @UseGuards(DynamicAuthGuard, OwnerGuard)
     async createWallet(@Body() walletParams: CreateWalletDto) {
         const wallet = {
             ...walletParams,
@@ -18,10 +18,10 @@ export class SolanaController {
         return this.solanaService.createWallet(wallet);
     }
 
-    @Get(':userAuthId')
+    @Get(':userId')
     @UseGuards(DynamicAuthGuard)
-    async getWallet(@Param('userAuthId') userAuthId: string) {
-        return this.solanaService.getWalletsByOwner(userAuthId);
+    async getWallets(@Param('userId') userId: string) {
+        return this.solanaService.getWalletsByOwner(userId);
     }
 
     @Get(':publicKey/balance')
@@ -31,13 +31,13 @@ export class SolanaController {
     }
 
     @Post('/sendTransaction')
-    @UseGuards(OwnerGuard)
+    @UseGuards(DynamicAuthGuard, OwnerGuard)
     async sendTransaction(@Body() body: SendTransactionDto) {
         return this.solanaService.sendTransaction(body.publicKey, body.to, body.amount);
     }
 
     @Post('/signMessage')
-    @UseGuards(OwnerGuard)
+    @UseGuards(DynamicAuthGuard, OwnerGuard)
     async signMessage(@Body() body: SignMessageDto) {
         return this.solanaService.signMessage(body.publicKey, body.message);
     }

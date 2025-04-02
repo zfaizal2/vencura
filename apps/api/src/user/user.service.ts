@@ -15,4 +15,13 @@ export class UserService {
           data,
         });
       }
+
+      async getUser(authId: string): Promise<User> {
+        return this.prisma.user.findFirst({
+          where: { auth_id: authId },
+          include: {
+            Wallet: true
+          }
+        });
+      }
 }

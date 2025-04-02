@@ -25,7 +25,6 @@ export default function RootLayout({ children }: Readonly<PropsWithChildren>) {
             walletConnectors: [SolanaWalletConnectors],
           }}
         >
-          <DynamicWidget />
         {children}
         </DynamicContextProvider>
       </body>
