@@ -87,10 +87,10 @@ const WalletPage = () => {
   const handleCreateUser = async () => {
     if (!sdk || !dynamicUserObj) return;
     try {
-      await sdk.createUser({
+      const newUser = await sdk.createUser({
         name: dynamicUserObj.alias,
       });
-      setUser(user);
+      setUser(newUser);
     } catch (error) {
       console.error('Error creating user:', error);
     }
