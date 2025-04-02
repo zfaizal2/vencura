@@ -11,7 +11,8 @@ import { AuthModule } from './auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { DynamicAuthGuard } from './auth/dynamic.guard';
 import { AuthService } from './auth/auth.service';
-
+import { PrismaService } from './prisma/prisma.service';
+import { UserService } from './user/user.service';
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -23,6 +24,6 @@ import { AuthService } from './auth/auth.service';
     AuthModule,
   ],
   controllers: [AppController],
-  providers: [AppService, AuthService,{ provide: APP_GUARD, useClass: DynamicAuthGuard }],
+  providers: [AppService, AuthService,{ provide: APP_GUARD, useClass: DynamicAuthGuard }, PrismaService, UserService],
 })
 export class AppModule {}
